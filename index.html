@@ -111,13 +111,13 @@ tr.zero td { color: var(--muted); }
   </header>
 
   <div class="prize">
-    <div class="prize-amt"><strong>$750</strong><span>1st place</span></div>
+    <div class="prize-amt"><strong>$500</strong><span>1st place</span></div>
     <div class="prize-amt second"><strong>$250</strong><span>2nd place</span></div>
-    <p>Paid each month to the two salespeople with the most quoted referrals. A referral counts once Rossi &amp; Associates has quoted the customer.</p>
+    <p>A monthly bonus for the two salespeople with the most quoted referrals, on top of the $50 you already earn for every customer we quote.</p>
   </div>
 
   <section class="tiles">
-    <div class="card tile"><span class="label" id="lead-label">1st place · $750</span><span class="big name" id="t-leader"></span><span class="sub" id="t-dealer"></span></div>
+    <div class="card tile"><span class="label" id="lead-label">1st place · $500</span><span class="big name" id="t-leader"></span><span class="sub" id="t-dealer"></span></div>
     <div class="card tile"><span class="label" id="second-label">2nd place · $250</span><span class="big name" id="t-second"></span><span class="sub" id="t-second-sub"></span></div>
     <div class="card tile"><span class="label">Quoted referrals, all dealers</span><span class="big" id="t-total"></span><span class="sub" id="t-prev"></span></div>
     <div class="card tile"><span class="label">Salespeople on the board</span><span class="big" id="t-active"></span><span class="sub" id="t-roster"></span></div>
@@ -195,7 +195,7 @@ tr.zero td { color: var(--muted); }
   function render() {
     const m = sel.value, live = m === latest, s = summary(m);
     const tied = s.leaders.length > 1;
-    $('lead-label').textContent = (live ? '1st place now' : '1st place') + ' · $750';
+    $('lead-label').textContent = (live ? '1st place now' : '1st place') + ' · $500';
     if (tied) { const p = document.createElement('span'); p.className = 'pill'; p.textContent = 'Tied'; $('lead-label').append(p); }
     $('t-leader').textContent = s.leaders.length ? names(s.leaders) : 'No one yet';
     $('t-dealer').textContent = s.top ? `${dealersOf(s.leaders)} · ${plural(s.top, 'quoted referral')}` : '';
