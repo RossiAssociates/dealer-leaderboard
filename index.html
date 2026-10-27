@@ -1,0 +1,272 @@
+<title>Dealer Referral Leaderboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: a showroom scoreboard. Prize banner up top, the race (top 10) beside the stat tiles, full standings below. */
+:root {
+  --bg: #f3f5f8;
+  --panel: #ffffff;
+  --ink: #141b26;
+  --muted: #5b6676;
+  --line: #dde2ea;
+  --accent: #1f4fd1;
+  --accent-soft: #e4ebfc;
+  --gold: #b07a0a;
+  --gold-soft: #fbf1d9;
+  --bar-muted: #c9d1de;
+  --silver: #5d6b80;
+  --second: #7b93c9;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131b; --panel: #161d28; --ink: #e8ecf2; --muted: #95a1b3; --line: #273142;
+    --accent: #7ea2ff; --accent-soft: #1c2944; --gold: #f0c35a; --gold-soft: #2c2412; --bar-muted: #34405a; --silver: #b9c4d6; --second: #4b628f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131b; --panel: #161d28; --ink: #e8ecf2; --muted: #95a1b3; --line: #273142;
+  --accent: #7ea2ff; --accent-soft: #1c2944; --gold: #f0c35a; --gold-soft: #2c2412; --bar-muted: #34405a; --silver: #b9c4d6; --second: #4b628f;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
+header > div { min-width: 0; flex: 1 1 26rem; }
+.eyebrow { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--accent); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, 6vw, 52px); line-height: 1; margin: 4px 0 10px; text-wrap: balance; letter-spacing: -.01em; }
+.takeaway { margin: 0; font-size: 17px; max-width: 62ch; }
+.controls-top { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+select, input[type="search"] { font: inherit; font-size: 15px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.prize { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; background: var(--gold-soft); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); border-radius: var(--r); padding: 12px 16px; }
+.prize-amt { display: flex; align-items: baseline; gap: 6px; }
+.prize-amt strong { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--gold); line-height: 1; }
+.prize-amt span { font-family: var(--display); font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: .05em; color: var(--gold); }
+.prize-amt.second strong, .prize-amt.second span { color: var(--silver); }
+.prize p { margin: 0; flex: 1 1 18rem; min-width: 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; }
+.tile { display: flex; flex-direction: column; gap: 4px; }
+.label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.big { font-family: var(--display); font-weight: 600; font-size: 36px; line-height: 1.05; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.big.name { font-size: 28px; }
+.sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pill { font-size: 11px; letter-spacing: .04em; padding: 1px 8px; border-radius: 999px; background: var(--gold-soft); color: var(--gold); border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 12px; align-items: start; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 24px; margin: 0; line-height: 1.1; }
+.note { font-size: 13px; color: var(--muted); margin: 4px 0 14px; }
+.race { display: grid; gap: 8px; }
+.race-row { display: grid; grid-template-columns: 1.6rem minmax(0, 9.5rem) minmax(0, 1fr) 2.2rem; align-items: center; gap: 10px; font-size: 14px; }
+.race-row .pos { font-family: var(--display); font-weight: 600; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.race-row .who { min-width: 0; }
+.race-row .who b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.race-row .who small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track { height: 18px; background: color-mix(in srgb, var(--bar-muted) 30%, transparent); border-radius: 5px; overflow: hidden; }
+.fill { height: 100%; background: var(--bar-muted); border-radius: 5px; }
+.race-row.lead .fill { background: var(--accent); }
+.race-row.second .fill { background: var(--second); }
+tr.runner td:first-child { color: var(--silver); font-weight: 600; }
+.winners .w .two { display: block; color: var(--muted); font-weight: 400; font-size: 13px; margin-top: 2px; }
+.race-row .n { font-family: var(--display); font-weight: 700; font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+.winners { list-style: none; margin: 0; padding: 0; display: grid; }
+.winners li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) auto; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.winners li:last-child { border-bottom: 0; }
+.winners .m { color: var(--muted); font-size: 13px; }
+.winners .w { min-width: 0; font-weight: 500; }
+.winners .w small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+.winners .c { font-family: var(--display); font-weight: 700; font-size: 18px; font-variant-numeric: tabular-nums; }
+.winners li.live .m::after { content: " · in progress"; color: var(--accent); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.filters input[type="search"] { flex: 1 1 13rem; }
+.filters select { flex: 0 1 15rem; }
+.check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.tablebox { max-height: 34rem; overflow: auto; border-top: 1px solid var(--line); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th { position: sticky; top: 0; background: var(--panel); text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 500; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.num { text-align: right; }
+tr.first td { font-weight: 600; }
+tr.first td:first-child { color: var(--gold); }
+tr.zero td { color: var(--muted); }
+.empty { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.foot { font-size: 12px; color: var(--muted); }
+@media (max-width: 560px) { .hide-sm { display: none; } .race-row { grid-template-columns: 1.4rem minmax(0, 7.5rem) minmax(0, 1fr) 2rem; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Rossi &amp; Associates · Dealership referral contest</div>
+      <h1>Dealer Referral Leaderboard</h1>
+      <p class="takeaway" id="takeaway"></p>
+    </div>
+    <label class="controls-top" for="month">Contest month
+      <select id="month"></select>
+    </label>
+  </header>
+
+  <div class="prize">
+    <div class="prize-amt"><strong>$750</strong><span>1st place</span></div>
+    <div class="prize-amt second"><strong>$500</strong><span>2nd place</span></div>
+    <p>Paid each month to the two salespeople with the most quoted referrals. A referral counts once Rossi &amp; Associates has quoted the customer.</p>
+  </div>
+
+  <section class="tiles">
+    <div class="card tile"><span class="label" id="lead-label">1st place · $750</span><span class="big name" id="t-leader"></span><span class="sub" id="t-dealer"></span></div>
+    <div class="card tile"><span class="label" id="second-label">2nd place · $500</span><span class="big name" id="t-second"></span><span class="sub" id="t-second-sub"></span></div>
+    <div class="card tile"><span class="label">Quoted referrals, all dealers</span><span class="big" id="t-total"></span><span class="sub" id="t-prev"></span></div>
+    <div class="card tile"><span class="label">Salespeople on the board</span><span class="big" id="t-active"></span><span class="sub" id="t-roster"></span></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2 id="race-title">Top 10</h2>
+      <p class="note">Quoted referrals sent to Rossi &amp; Associates this month.</p>
+      <div class="race" id="race"></div>
+    </div>
+    <div class="card">
+      <h2>Monthly winners</h2>
+      <p class="note">1st and 2nd place by quoted referrals each month. Ties list every name.</p>
+      <ul class="winners" id="winners"></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 id="table-title">Full standings</h2>
+    <p class="note">Every dealership salesperson, ranked by quoted referrals. Salespeople tied on referrals share a rank. Bound shows how many became policies.</p>
+    <div class="filters">
+      <input type="search" id="search" placeholder="Find your name" aria-label="Find a salesperson">
+      <select id="dealer" aria-label="Dealership"></select>
+      <label class="check" for="all"><input type="checkbox" id="all"> Show everyone</label>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th class="num">Rank</th><th>Salesperson</th><th class="hide-sm">Dealership</th><th class="num">Quoted referrals</th><th class="num hide-sm">Bound</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="empty" hidden></p>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script id="data" type="application/json">{"updated":"2026-10-27","dealers":["AutoNation Chevy","AutoNation Toyota","BMW of Daytona","Bill Ray Nissan","Boniface CDJ","Boniface Chevy","Boniface Kia","Boniface Mazda","Broward Motor Sports","Classic Honda","Don Mealey Chevy","Drivers Mart","Ford of Clermont","Greenway Dodge","Greenway Ford","Greenway Hyundai","Greenway Kia East","Greenway Kia North","Greenway Kia West","Holler Ford","Holler Honda","Holler Hyundai","Hyundai Central Florida","M-1 Motorsports","Napleton CDJ","New dealer (unnamed)","Nissan (unspecified)","Reed Nissan","Sport Subaru","Sutherlin Nissan","Toyota of Clermont","VW South Orlando"],"people":[["AJ",18],["AJ Abdelaziz",15],["Abdelkader Trabelsi",18],["Abe Rojas",19],["Acael Ceccopieri",16],["Achraf Lazaar",18],["Adam Zola",11],["Adonis",14],["Ahmad Suid",16],["Ahmed Nordine",29],["Aldrin Perez",6],["Alec Holler",21],["Alejandro Castillo",14],["Alex Hernandez",14],["Alex Patino",18],["Alfredo Anzola Bortone",0],["Alison Belcher",16],["Alvaro Lezcano",14],["Amine Jlaidi",18],["Amr Abu Jbara",14],["Anas Lazaar",18],["Andres Rodriguez",14],["Andrew",4],["Andrew Munn",10],["Andy Urdaneta",16],["Angel Roman",2],["Anshar McLeod",9],["Aracelis Martinez",16],["Armando Cancel",0],["Ashley Rivera",7],["Asli Severino",16],["Athena Figueroa",18],["Avelino Alexander",16],["Barry Brown",17],["Ben Alima",19],["Berk Aldinc",16],["Blake Ellis",21],["Brad",5],["Brady Clark",5],["Brendan",13],["Brenon Samuels",14],["Carlos Anguiano",18],["Carlos Tejeda",14],["Cevat Demiratan",16],["Cham Nercado Zyat",17],["Chris Rodriguez",16],["Chris Rusk",29],["Christian",7],["Christian Wheelan",10],["Cody Jacobs",17],["Conner Welch",18],["Corey Warren",24],["Craig Williams",16],["Damion Johnson",16],["Danial Bozorgzade",14],["Daniel",14],["Daniel Allen",18],["Daniel Galeas",9],["Dave",3],["David Anderson",17],["David Crayne",26],["David Espinoza",0],["David Garcia",5],["David Souchet",14],["Deleon Mark Athony Campbell",17],["Demetrius Dees",6],["Dennis Bernard",17],["Diego Salvador",16],["Dion Rodriguez",6],["Don Beard",6],["Doris Hymer",14],["Edlen Colon",14],["Eduardo Castro",16],["Edwin Gonzalez",27],["Elihah Magogany",18],["Elvis",29],["Erica Nunez",17],["Eurisquel Paulino",14],["Farid Nibrasse",17],["Felix Roque",14],["Frank Whiteley",4],["Gabriel Marquez",1],["Galina Lappo",18],["Garry",4],["Gary Novak",10],["Gemoi Elliassaint",17],["George Lainez",14],["George Pinango",1],["Georgie",6],["Greg Williams",16],["Gregorio Bravo",1],["Hassan Abadi",14],["Herick Henriquez",7],["Hicham Belharsa",17],["Housni Moudden",17],["Huseyin Ates",25],["Iderson Eliassant",16],["Israel Maldonado",14],["Ivan Carpio",18],["Ivana Colon",17],["Jade Gross",22],["Jaden",6],["Jaison Gonzalez",29],["Jaivion",4],["James \"MJ\" Salim",18],["James \"jc\" Harrelson",10],["James Seven",9],["Jason Rambisoon",24],["Javier Munoz",5],["Jaylin",20],["Jean Aime",1],["Jeremy Gresham",18],["Jericho Cantave",19],["Jesse Lemacks",5],["Joao Henrique Galavanese",17],["Joao Pieres",17],["Joel Cartagenn",14],["John Bedar",3],["John Benson",6],["John Gazitua",8],["John Martinez",14],["Jordan Roach",17],["Jorge Gomez",14],["Jorge Roque",14],["Jose Alzuri",10],["Jose Galvan",12],["Jose Ortiz",14],["Jose Saint-Hilaire",29],["Joseph",7],["Josephine Santana",16],["Josh",6],["Jospeh Hernandez",18],["Juan Carlos Garcia",1],["Junior Pierre",16],["Justin Chitty",6],["Justin Kelly",16],["Kalia Odekirk",17],["Karl",6],["Kazim Ertiftik",18],["Keegan",4],["Kenneth Phynn",29],["Kertavia \"Tay\" Harris",14],["Kevin Rodriguez",23],["Kieron",14],["Kyle Wooten",14],["London R",14],["Lucas Del Moral",14],["Mac Cumbur",18],["Maher Mehjazi",18],["Malcom Mahogany",18],["Marcos Luna",14],["Mario Pinilla",18],["Mario Vale",16],["Mathew D",7],["Matt Preston",5],["Mava Berreto",5],["Meagen Riccardo",24],["Mert Gunes",16],["Michael",4],["Michael Jubran",14],["Michael McLeod",17],["Michelangelo Bencomo",16],["Miguel",6],["Mike Ortiz",17],["Mike Severino",16],["Mike Teeravatya",14],["Missy",5],["Moe",6],["Mohamed Sarrar (Simo)",18],["Moises Villamizar",16],["Mojo",6],["Morgan",6],["Muhammed Yazici",18],["Narciso Reyes",14],["Nas Rajabi",16],["Nate Bryant",6],["Nathan",23],["Nathan Alexander",5],["Nick Rodriguez",31],["Nickya Blackman",10],["Nizar Abou Ammar",14],["Nouha El Kaouri",27],["Omar Ahamed",14],["Orion Duran",14],["Orlando Garcia",0],["Patricia Hobbs",18],["Paul French",18],["Pedro \"Big Guy\" Sotolongo",16],["Quinton Harris",17],["Rachael Eggert",14],["Rafael Wakefield Gayon",16],["Rayan Jurdi",16],["Ric Roberts",14],["Ricardo Anderson",17],["Richard Anthony Caruso",17],["Riley Prussing",17],["Riz",0],["Rob (Sport Subaru)",28],["Robert Gomez",14],["Robert Perez",16],["Robinson Cabrera",14],["Rose Cordero",30],["Samuel Perez",17],["Sandy",6],["Saryia Butler",18],["Shabaaz Hussain",16],["Sheldon",6],["Stefan Kholobayev",14],["Stephan Jaques",4],["Steve Gansham",17],["Steve McCorry",10],["Steven Roedan",15],["Sufyan Alrais",14],["Tatiana",4],["Taylor",6],["Teresa Hordge",14],["Terry Ingold",6],["Thomas",7],["Tom Fix",3],["Tony Hamdan",18],["Tracie Fonty",4],["Travis Dublin",17],["Trent Barrett",7],["Trent Jacob",17],["Treven Cross",24],["Tyler Schneiderwind",16],["Tyler Tipton",4],["Usla",16],["Wally Salahi",21],["Wilbert Pyram",14],["William Rother",17],["Williana Campos",14],["Willie Willette",12],["Xavier Lawson",17],["Yahya Marzaq",15],["Yassine Bouchlouch",18],["Youseff",18],["Youssf Ballan",18],["Zach",4],["Zachary Lucas",20],["Zarya Demonia",18]],"months":{"2026-01":[[8,1,0],[14,1,0],[30,1,1],[121,1,1],[138,1,0],[191,1,1],[193,1,1],[209,2,0]],"2026-02":[[12,1,0],[16,1,0],[32,1,0],[44,1,0],[63,1,1],[66,1,0],[71,1,1],[75,1,0],[77,1,0],[86,1,1],[91,1,0],[99,1,0],[121,2,2],[123,2,0],[138,2,1],[140,1,0],[149,2,0],[165,1,0],[172,1,0],[174,2,1],[187,2,1],[195,1,0],[207,1,0],[219,2,1],[231,5,2],[240,1,0]],"2026-03":[[6,1,0],[71,1,0],[77,1,1],[82,2,1],[86,2,1],[121,1,1],[140,1,0],[149,2,1],[160,2,2],[165,1,0],[180,1,1],[182,2,1],[187,5,3],[204,2,2],[212,2,1]],"2026-04":[[9,1,0],[30,2,2],[33,1,0],[44,2,2],[50,1,1],[53,2,0],[54,1,1],[67,4,0],[72,1,0],[85,1,0],[99,2,2],[115,1,0],[121,2,1],[135,1,0],[140,1,0],[169,2,2],[182,1,1],[191,1,1],[199,1,0],[204,1,1],[210,1,1],[225,3,0]],"2026-05":[[6,1,1],[27,1,0],[49,1,0],[52,1,1],[54,1,0],[72,2,1],[77,1,1],[85,3,2],[121,1,1],[133,1,0],[135,1,1],[140,1,0],[160,1,0],[168,3,1],[169,2,1],[180,1,1],[182,1,0],[187,5,2],[204,1,1],[218,1,0],[225,1,0]],"2026-06":[[32,1,1],[33,1,0],[53,1,0],[55,1,1],[72,4,0],[81,1,0],[82,1,1],[89,6,1],[121,1,0],[138,2,0],[152,1,0],[180,2,1],[187,3,1],[225,3,2]],"2026-07":[[14,1,0],[72,1,1],[89,1,0],[96,1,0],[133,1,1],[135,4,1],[138,4,2],[157,1,0],[199,1,1],[219,2,2],[225,1,1]],"2026-08":[[10,3,0],[25,1,1],[29,1,1],[30,4,2],[33,1,0],[44,1,0],[58,1,0],[72,3,0],[85,2,1],[86,1,0],[89,5,1],[92,1,1],[96,5,3],[117,1,0],[129,1,0],[138,3,1],[154,3,0],[157,5,1],[164,1,0],[169,1,0],[170,1,1],[180,1,1],[187,1,1],[199,2,0],[203,1,0],[219,4,1],[222,1,1],[225,2,0],[240,1,0]],"2026-09":[[0,3,2],[10,1,0],[30,1,1],[33,1,0],[44,1,0],[72,2,0],[80,1,0],[85,1,1],[88,1,0],[89,3,0],[95,1,0],[108,1,1],[118,1,1],[135,5,1],[138,2,0],[154,3,2],[157,1,0],[166,1,1],[167,1,0],[187,2,0],[219,6,2],[220,1,0],[225,1,1],[226,2,0],[227,1,0],[231,1,0],[234,1,0],[239,2,0]],"2026-10":[[0,1,0],[10,1,0],[24,1,0],[29,1,1],[32,2,0],[60,1,0],[69,1,1],[72,1,0],[80,1,1],[85,1,0],[89,10,1],[104,2,1],[109,1,1],[118,2,2],[119,1,0],[121,1,1],[135,1,0],[138,1,1],[154,2,2],[155,1,1],[185,1,0],[187,6,2],[197,1,1],[216,1,0],[219,2,0],[220,6,2],[222,1,1],[236,1,1]]}}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const $ = (id) => document.getElementById(id);
+  const months = Object.keys(D.months).sort();
+  const latest = months[months.length - 1];
+  const mName = (m) => new Date(m + '-15T12:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const mShort = (m) => new Date(m + '-15T12:00:00').toLocaleDateString('en-US', { month: 'long' });
+  const num = (n) => n.toLocaleString('en-US');
+  const plural = (n, w) => `${num(n)} ${w}${n === 1 ? '' : 's'}`;
+
+  function standings(m) {
+    const t = new Map((D.months[m] || []).map(([i, q, b]) => [i, [q, b]]));
+    const rows = D.people.map(([name, d], i) => ({ name, dealer: D.dealers[d], q: (t.get(i) || [0, 0])[0], b: (t.get(i) || [0, 0])[1] }));
+    rows.sort((a, z) => z.q - a.q || a.name.localeCompare(z.name));
+    rows.forEach((r, i) => { r.rank = i && rows[i - 1].q === r.q ? rows[i - 1].rank : i + 1; });
+    return rows;
+  }
+  function summary(m) {
+    const rows = standings(m);
+    const top = rows[0] ? rows[0].q : 0;
+    const leaders = top ? rows.filter((r) => r.q === top) : [];
+    const next = (rows.find((r) => r.q < top) || { q: 0 }).q;
+    const seconds = leaders.length === 1 && next > 0 ? rows.filter((r) => r.q === next) : [];
+    return { rows, top, leaders, next, seconds, gap: top - next, total: rows.reduce((s, r) => s + r.q, 0), active: rows.filter((r) => r.q > 0).length };
+  }
+  const names = (ls) => ls.map((r) => r.name).join(' & ');
+  const dealersOf = (ls) => [...new Set(ls.map((r) => r.dealer))].join(' & ');
+
+  const sel = $('month');
+  sel.append(...months.slice().reverse().map((m) => new Option(mName(m), m)));
+  sel.value = latest;
+  const ui = { search: '', dealer: '', all: false };
+  $('dealer').append(new Option('All dealerships', ''), ...D.dealers.map((d) => new Option(d, d)));
+
+  function render() {
+    const m = sel.value, live = m === latest, s = summary(m);
+    const tied = s.leaders.length > 1;
+    $('lead-label').textContent = (live ? '1st place now' : '1st place') + ' · $750';
+    if (tied) { const p = document.createElement('span'); p.className = 'pill'; p.textContent = 'Tied'; $('lead-label').append(p); }
+    $('t-leader').textContent = s.leaders.length ? names(s.leaders) : 'No one yet';
+    $('t-dealer').textContent = s.top ? `${dealersOf(s.leaders)} · ${plural(s.top, 'quoted referral')}` : '';
+    $('second-label').textContent = (live ? '2nd place now' : '2nd place') + ' · $500';
+    if (s.seconds.length > 1) { const p = document.createElement('span'); p.className = 'pill'; p.textContent = 'Tied'; $('second-label').append(p); }
+    $('t-second').textContent = tied ? 'Tied for 1st' : s.seconds.length ? names(s.seconds) : 'No one yet';
+    $('t-second-sub').textContent = tied ? 'Two or more salespeople share the top spot' : s.seconds.length ? `${dealersOf(s.seconds)} · ${plural(s.next, 'quoted referral')}` : '';
+    $('t-total').textContent = num(s.total);
+    const i = months.indexOf(m);
+    if (i > 0) {
+      const d = s.total - summary(months[i - 1]).total;
+      $('t-prev').textContent = `${d >= 0 ? '+' : '−'}${num(Math.abs(d))} vs ${mShort(months[i - 1])}${live ? ' (month in progress)' : ''}`;
+    } else $('t-prev').textContent = '';
+    $('t-active').textContent = num(s.active);
+    $('t-roster').textContent = `with at least one quoted referral, out of ${num(D.people.length)}`;
+
+    const name = mName(m);
+    let line;
+    if (!s.top) line = `No quoted referrals yet for ${name}.`;
+    else if (tied) line = `${names(s.leaders)} are tied ${live ? 'for the lead in' : 'for first in'} ${name} with ${plural(s.top, 'quoted referral')} each.`;
+    else if (live) line = `${names(s.leaders)} of ${dealersOf(s.leaders)} leads ${name} with ${plural(s.top, 'quoted referral')}` + (s.seconds.length ? `, ahead of ${names(s.seconds)} in 2nd with ${num(s.next)}.` : '.');
+    else line = `${names(s.leaders)} of ${dealersOf(s.leaders)} took 1st in ${name} with ${plural(s.top, 'quoted referral')}` + (s.seconds.length ? `, and ${names(s.seconds)} took 2nd with ${num(s.next)}.` : '.');
+    $('takeaway').textContent = line;
+    $('race-title').textContent = `Top 10, ${name}`;
+    $('table-title').textContent = `Full standings, ${name}`;
+
+    const race = $('race'); race.replaceChildren();
+    const top10 = s.rows.filter((r) => r.q > 0).slice(0, 10);
+    if (!top10.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'No quoted referrals yet this month.'; race.append(p); }
+    top10.forEach((r) => {
+      const row = document.createElement('div'); row.className = 'race-row' + (r.q === s.top ? ' lead' : s.seconds.length && r.q === s.next ? ' second' : '');
+      const pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = r.rank;
+      const who = document.createElement('span'); who.className = 'who';
+      const b = document.createElement('b'); b.textContent = r.name; const sm = document.createElement('small'); sm.textContent = r.dealer; who.append(b, sm);
+      const track = document.createElement('span'); track.className = 'track';
+      const fill = document.createElement('span'); fill.className = 'fill'; fill.style.display = 'block'; fill.style.width = (r.q / s.top * 100) + '%'; track.append(fill);
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = r.q;
+      row.append(pos, who, track, n); race.append(row);
+    });
+
+    const ul = $('winners'); ul.replaceChildren();
+    months.slice().reverse().forEach((mm) => {
+      const w = summary(mm); if (!w.top) return;
+      const li = document.createElement('li'); if (mm === latest) li.className = 'live';
+      const a = document.createElement('span'); a.className = 'm'; a.textContent = mName(mm);
+      const bb = document.createElement('span'); bb.className = 'w'; bb.textContent = names(w.leaders);
+      const sm = document.createElement('small'); sm.textContent = dealersOf(w.leaders); bb.append(sm);
+      if (w.seconds.length) { const two = document.createElement('span'); two.className = 'two'; two.textContent = `2nd: ${names(w.seconds)} (${num(w.next)})`; bb.append(two); }
+      const c = document.createElement('span'); c.className = 'c'; c.textContent = w.top;
+      li.append(a, bb, c); ul.append(li);
+    });
+
+    const shown = s.rows.filter((r) => (ui.all || r.q > 0) && (!ui.dealer || r.dealer === ui.dealer) && (!ui.search || r.name.toLowerCase().includes(ui.search)));
+    $('rows').replaceChildren(...shown.map((r) => {
+      const tr = document.createElement('tr'); if (r.q && r.rank === 1) tr.className = 'first'; else if (s.seconds.length && r.q === s.next) tr.className = 'runner'; else if (!r.q) tr.className = 'zero';
+      [[r.rank, 'num'], [r.name, ''], [r.dealer, 'hide-sm'], [r.q, 'num'], [r.b, 'num hide-sm']].forEach(([v, c]) => { const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.append(td); });
+      return tr;
+    }));
+    const zeros = s.rows.filter((r) => !r.q && (!ui.dealer || r.dealer === ui.dealer)).length;
+    const e = $('empty');
+    if (!shown.length) { e.hidden = false; e.textContent = ui.search || ui.dealer ? 'No one matches that search. Tick "Show everyone" to include salespeople with no quoted referrals yet.' : 'No quoted referrals yet this month.'; }
+    else if (!ui.all && zeros && !ui.search) { e.hidden = false; e.textContent = `${num(zeros)} more salespeople haven't had a referral quoted this month. Tick "Show everyone" to see them.`; }
+    else e.hidden = true;
+
+    $('foot').textContent = `Standings as of ${new Date(D.updated + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}. Referrals that were not quoted are not counted.`;
+  }
+
+  sel.addEventListener('change', render);
+  $('search').addEventListener('input', (e) => { ui.search = e.target.value.trim().toLowerCase(); render(); });
+  $('dealer').addEventListener('change', (e) => { ui.dealer = e.target.value; render(); });
+  $('all').addEventListener('change', (e) => { ui.all = e.target.checked; render(); });
+  render();
+})();
+</script>
