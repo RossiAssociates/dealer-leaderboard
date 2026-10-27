@@ -138,15 +138,14 @@ tr.zero td { color: var(--muted); }
 
   <section class="card">
     <h2 id="table-title">Full standings</h2>
-    <p class="note">Every dealership salesperson, ranked by quoted referrals. Salespeople tied on referrals share a rank. Bound shows how many became policies.</p>
+    <p class="note">Salespeople with at least one quoted referral this month, ranked. Salespeople tied on referrals share a rank.</p>
     <div class="filters">
       <input type="search" id="search" placeholder="Find your name" aria-label="Find a salesperson">
       <select id="dealer" aria-label="Dealership"></select>
-      <label class="check" for="all"><input type="checkbox" id="all"> Show everyone</label>
     </div>
     <div class="tablebox">
       <table>
-        <thead><tr><th class="num">Rank</th><th>Salesperson</th><th class="hide-sm">Dealership</th><th class="num">Quoted referrals</th><th class="num hide-sm">Bound</th></tr></thead>
+        <thead><tr><th class="num">Rank</th><th>Salesperson</th><th class="hide-sm">Dealership</th><th class="num">Quoted referrals</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -190,7 +189,6 @@ tr.zero td { color: var(--muted); }
   sel.append(...months.slice().reverse().map((m) => new Option(mName(m), m)));
   sel.value = latest;
   const ui = { search: '', dealer: '', all: false };
-  $('dealer').append(new Option('All dealerships', ''), ...D.dealers.map((d) => new Option(d, d)));
 
   function render() {
     const m = sel.value, live = m === latest, s = summary(m);
@@ -210,7 +208,7 @@ tr.zero td { color: var(--muted); }
       $('t-prev').textContent = `${d >= 0 ? '+' : '−'}${num(Math.abs(d))} vs ${mShort(months[i - 1])}${live ? ' (month in progress)' : ''}`;
     } else $('t-prev').textContent = '';
     $('t-active').textContent = num(s.active);
-    $('t-roster').textContent = `with at least one quoted referral, out of ${num(D.people.length)}`;
+    $('t-roster').textContent = 'with at least one quoted referral this month';
 
     const name = mName(m);
     let line;
@@ -248,16 +246,18 @@ tr.zero td { color: var(--muted); }
       li.append(a, bb, c); ul.append(li);
     });
 
-    const shown = s.rows.filter((r) => (ui.all || r.q > 0) && (!ui.dealer || r.dealer === ui.dealer) && (!ui.search || r.name.toLowerCase().includes(ui.search)));
+    const active = [...new Set(s.rows.filter((r) => r.q > 0).map((r) => r.dealer))].sort();
+    if (ui.dealer && !active.includes(ui.dealer)) ui.dealer = '';
+    $('dealer').replaceChildren(new Option('All dealerships', ''), ...active.map((d) => new Option(d, d)));
+    $('dealer').value = ui.dealer;
+    const shown = s.rows.filter((r) => r.q > 0 && (!ui.dealer || r.dealer === ui.dealer) && (!ui.search || r.name.toLowerCase().includes(ui.search)));
     $('rows').replaceChildren(...shown.map((r) => {
       const tr = document.createElement('tr'); if (r.q && r.rank === 1) tr.className = 'first'; else if (s.seconds.length && r.q === s.next) tr.className = 'runner'; else if (!r.q) tr.className = 'zero';
-      [[r.rank, 'num'], [r.name, ''], [r.dealer, 'hide-sm'], [r.q, 'num'], [r.b, 'num hide-sm']].forEach(([v, c]) => { const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.append(td); });
+      [[r.rank, 'num'], [r.name, ''], [r.dealer, 'hide-sm'], [r.q, 'num']].forEach(([v, c]) => { const td = document.createElement('td'); td.textContent = v; if (c) td.className = c; tr.append(td); });
       return tr;
     }));
-    const zeros = s.rows.filter((r) => !r.q && (!ui.dealer || r.dealer === ui.dealer)).length;
     const e = $('empty');
-    if (!shown.length) { e.hidden = false; e.textContent = ui.search || ui.dealer ? 'No one matches that search. Tick "Show everyone" to include salespeople with no quoted referrals yet.' : 'No quoted referrals yet this month.'; }
-    else if (!ui.all && zeros && !ui.search) { e.hidden = false; e.textContent = `${num(zeros)} more salespeople haven't had a referral quoted this month. Tick "Show everyone" to see them.`; }
+    if (!shown.length) { e.hidden = false; e.textContent = ui.search || ui.dealer ? 'No one matches that search this month.' : 'No quoted referrals yet this month.'; }
     else e.hidden = true;
 
     $('foot').textContent = `Standings as of ${new Date(D.updated + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}. Referrals that were not quoted are not counted.`;
@@ -266,7 +266,6 @@ tr.zero td { color: var(--muted); }
   sel.addEventListener('change', render);
   $('search').addEventListener('input', (e) => { ui.search = e.target.value.trim().toLowerCase(); render(); });
   $('dealer').addEventListener('change', (e) => { ui.dealer = e.target.value; render(); });
-  $('all').addEventListener('change', (e) => { ui.all = e.target.checked; render(); });
   render();
 })();
 </script>
