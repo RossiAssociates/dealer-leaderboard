@@ -112,13 +112,13 @@ tr.zero td { color: var(--muted); }
 
   <div class="prize">
     <div class="prize-amt"><strong>$750</strong><span>1st place</span></div>
-    <div class="prize-amt second"><strong>$500</strong><span>2nd place</span></div>
+    <div class="prize-amt second"><strong>$250</strong><span>2nd place</span></div>
     <p>Paid each month to the two salespeople with the most quoted referrals. A referral counts once Rossi &amp; Associates has quoted the customer.</p>
   </div>
 
   <section class="tiles">
     <div class="card tile"><span class="label" id="lead-label">1st place · $750</span><span class="big name" id="t-leader"></span><span class="sub" id="t-dealer"></span></div>
-    <div class="card tile"><span class="label" id="second-label">2nd place · $500</span><span class="big name" id="t-second"></span><span class="sub" id="t-second-sub"></span></div>
+    <div class="card tile"><span class="label" id="second-label">2nd place · $250</span><span class="big name" id="t-second"></span><span class="sub" id="t-second-sub"></span></div>
     <div class="card tile"><span class="label">Quoted referrals, all dealers</span><span class="big" id="t-total"></span><span class="sub" id="t-prev"></span></div>
     <div class="card tile"><span class="label">Salespeople on the board</span><span class="big" id="t-active"></span><span class="sub" id="t-roster"></span></div>
   </section>
@@ -199,7 +199,7 @@ tr.zero td { color: var(--muted); }
     if (tied) { const p = document.createElement('span'); p.className = 'pill'; p.textContent = 'Tied'; $('lead-label').append(p); }
     $('t-leader').textContent = s.leaders.length ? names(s.leaders) : 'No one yet';
     $('t-dealer').textContent = s.top ? `${dealersOf(s.leaders)} · ${plural(s.top, 'quoted referral')}` : '';
-    $('second-label').textContent = (live ? '2nd place now' : '2nd place') + ' · $500';
+    $('second-label').textContent = (live ? '2nd place now' : '2nd place') + ' · $250';
     if (s.seconds.length > 1) { const p = document.createElement('span'); p.className = 'pill'; p.textContent = 'Tied'; $('second-label').append(p); }
     $('t-second').textContent = tied ? 'Tied for 1st' : s.seconds.length ? names(s.seconds) : 'No one yet';
     $('t-second-sub').textContent = tied ? 'Two or more salespeople share the top spot' : s.seconds.length ? `${dealersOf(s.seconds)} · ${plural(s.next, 'quoted referral')}` : '';
